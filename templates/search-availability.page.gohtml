@@ -2,4 +2,51 @@
 
 {{define "content"}}
 
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <h1 class="text-center mt-4">Check for Availability</h1>
+
+                <form action="" method="GET" novalidate class="needs-validation">
+                    <div class="form-row">
+                        <div class="col">
+                            <div id="reservation-date" class="form-row">
+                                <div class="col">
+                                    <label for="start-date">Starting date</label>
+                                    <input required class="form-control" type="text" name="start-date" id="start-date"
+                                           aria-describedby="startDateHelp">
+                                    <small id="startDateHelp" class="form-text text-muted">Enter your starting date in
+                                        form of YYYY-MM-DD.</small>
+                                </div>
+
+                                <div class="col">
+                                    <label for="end-date">Ending date</label>
+                                    <input required class="form-control" type="text" name="end-date" id="end-date"
+                                           aria-describedby="endDateHelp">
+                                    <small id="endDateHelp" class="form-text text-muted">Enter your Ending date in
+                                        form of YYYY-MM-DD.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <button type="submit" class="btn btn-primary">Search Availability</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+{{end}}
+
+{{define "js"}}
+<script>
+    const elem = document.getElementById('reservation-date');
+    const rangepicker = new DateRangePicker(elem, {
+        format: "yyyy-mm-dd"
+    });
+</script>
 {{end}}

@@ -64,11 +64,6 @@ func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "majors.page.gohtml", &models.TemplateData{})
 }
 
-// Book renders the Book page
-func (m *Repository) Book(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "book.page.gohtml", &models.TemplateData{})
-}
-
 // Contact renders the Contact page
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "contact.page.gohtml", &models.TemplateData{})

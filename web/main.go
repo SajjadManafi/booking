@@ -19,6 +19,27 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Starting App on Port ", Port)
+	//_ = http.ListenAndServe(Port, nil)
+
+	srv := &http.Server{
+		Addr:    Port,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run() error{
 	// what am I going to put in the session
 	gob.Register(models.Reservation{})
 
@@ -36,6 +57,7 @@ func main() {
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
+		return err
 	}
 
 	app.TemplateCache = tc
@@ -49,16 +71,5 @@ func main() {
 	//http.HandleFunc("/", handler.Repo.Home)
 	//http.HandleFunc("/About", handler.Repo.About)
 
-	fmt.Println("Starting App on Port ", Port)
-	//_ = http.ListenAndServe(Port, nil)
-
-	srv := &http.Server{
-		Addr:    Port,
-		Handler: routes(&app),
-	}
-
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	return nil
 }

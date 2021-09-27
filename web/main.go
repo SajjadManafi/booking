@@ -22,7 +22,6 @@ var session *scs.SessionManager
 var infoLog *log.Logger
 var errorLog *log.Logger
 
-
 func main() {
 	err := run()
 
@@ -44,7 +43,7 @@ func main() {
 	}
 }
 
-func run() error{
+func run() error {
 	// what am I going to put in the session
 	gob.Register(models.Reservation{})
 

@@ -33,7 +33,6 @@ func NewHandler(r *Repository) {
 // About renders the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
-
 	//send data to the template
 	render.RenderTemplate(w, r, "about.page.gohtml", &models.TemplateData{})
 
@@ -98,7 +97,7 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 
 	out, err := json.MarshalIndent(Resp, "", "     ")
 	if err != nil {
-		helpers.ServerError(w,err)
+		helpers.ServerError(w, err)
 		return
 	}
 	w.Header().Set("Content-Type", "Application/json")
@@ -148,7 +147,7 @@ func (m *Repository) ReservationSummery(w http.ResponseWriter, r *http.Request) 
 	if !ok {
 		m.App.Session.Put(r.Context(), "error", "Can't get reservation from session")
 		m.App.ErrorLog.Println("Can't get reservation from session")
-		http.Redirect(w,r,"/",http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 

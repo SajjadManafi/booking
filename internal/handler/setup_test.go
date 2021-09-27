@@ -57,7 +57,6 @@ func getRoutes() http.Handler {
 
 	render.NewTemplates(&app)
 
-
 	//using chi
 	mux := chi.NewRouter()
 
@@ -86,7 +85,6 @@ func getRoutes() http.Handler {
 	return mux
 }
 
-
 // NoSurf adds csrf protection to all post request
 func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
@@ -109,8 +107,7 @@ func CreateTestTemplateCache() (map[string]*template.Template, error) {
 
 	myCache := map[string]*template.Template{}
 
-
-	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.gohtml" , pathToTemplates))
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.gohtml", pathToTemplates))
 	if err != nil {
 		return myCache, err
 	}
@@ -122,13 +119,13 @@ func CreateTestTemplateCache() (map[string]*template.Template, error) {
 			return myCache, err
 		}
 
-		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.gohtml" , pathToTemplates))
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.gohtml", pathToTemplates))
 		if err != nil {
 			return myCache, err
 		}
 
 		if len(matches) > 0 {
-			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.gohtml" , pathToTemplates))
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.gohtml", pathToTemplates))
 			if err != nil {
 				return myCache, err
 			}

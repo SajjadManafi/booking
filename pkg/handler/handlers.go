@@ -4,6 +4,7 @@ import (
 	"booking/pkg/config"
 	"booking/pkg/models"
 	"booking/pkg/render"
+	"fmt"
 	"net/http"
 )
 
@@ -26,6 +27,7 @@ func NewHandler(r *Repository) {
 	Repo = r
 }
 
+// About renders the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	//perform logic data
@@ -36,38 +38,52 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	StringMap["remoteIp"] = remoteIp
 
 	//send data to the template
-	render.RenderTemplate(w, "about.page.gohtml", &models.TemplateData{
+	render.RenderTemplate(w, r, "about.page.gohtml", &models.TemplateData{
 		StringMap: StringMap,
 	})
 
 }
 
+// Home renders the Home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	remoteIp := r.RemoteAddr
 	m.App.Session.Put(r.Context(), "remoteIp", remoteIp)
-	render.RenderTemplate(w, "home.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "home.page.gohtml", &models.TemplateData{})
 }
 
+// Generals renders the room page
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "generals.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "generals.page.gohtml", &models.TemplateData{})
 }
 
+// Majors renders the room page
 func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "majors.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "majors.page.gohtml", &models.TemplateData{})
 }
 
+// Book renders the Book page
 func (m *Repository) Book(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "book.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "book.page.gohtml", &models.TemplateData{})
 }
 
+// Contact renders the Contact page
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "contact.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "contact.page.gohtml", &models.TemplateData{})
 }
 
+// Availability renders the Availability page
 func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "search-availability.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "search-availability.page.gohtml", &models.TemplateData{})
 }
 
+// Reservation renders the Reservation page
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "make-reservation.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{})
+}
+
+// PostAvailability renders the Availability page
+func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
+	start := r.Form.Get("start-date")
+	end := r.Form.Get("end-date")
+	w.Write([]byte(fmt.Sprintf("Start date is %s & end date is %s", start , end)))
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"booking/internal/config"
+	"booking/internal/forms"
 	"booking/internal/models"
 	"booking/internal/render"
 	"encoding/json"
@@ -80,7 +81,14 @@ func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
 
 // Reservation renders the Reservation page
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{})
+
+	var emptyReservation models.Reservation
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation
+	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
+		Form: forms.New(nil),
+		Data: data,
+	})
 }
 
 // PostAvailability handles request for Availability
@@ -108,4 +116,37 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "Application/json")
 	w.Write(out)
+}
+
+// PostReservation handle the posting of a reservation form
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	reservation := models.Reservation{
+		FirstName: r.Form.Get("first_name"),
+		LastName: r.Form.Get("last_name"),
+		Phone: r.Form.Get("phone_number"),
+		Email: r.Form.Get("email"),
+	}
+
+	form := forms.New(r.PostForm)
+	//form.Has("first_name" ,r)
+
+	form.Required("first_name" , "last_name", "email")
+	form.MinLength("first_name", 3, r)
+	form.IsEmail("email")
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["reservation"] = reservation
+
+		render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+		return
+	}
+
 }

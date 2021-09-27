@@ -1,8 +1,8 @@
 package main
 
 import (
-	"booking/pkg/config"
-	"booking/pkg/handler"
+	"booking/internal/config"
+	"booking/internal/handler"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"net/http"

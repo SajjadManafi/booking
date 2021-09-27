@@ -89,7 +89,19 @@
     <script src="/static/js/main.js"></script>
 
     {{block "js" .}}
+        <script>
+            {{with .Error}}
+                notieAlert("{{.}}" , "error")
+            {{end}}
 
+            {{with .Flash}}
+            notieAlert("{{.}}" , "success")
+            {{end}}
+
+            {{with .Warning}}
+            notieAlert("{{.}}" , "warning")
+            {{end}}
+        </script>
     {{end}}
     </body>
 

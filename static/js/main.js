@@ -44,6 +44,7 @@ function sweetAlert(title, text, icon, confirmButtonText) {
     })
 }
 
+
 function Prompt() {
     let toast = function (c) {
         const {

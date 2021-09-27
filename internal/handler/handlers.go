@@ -149,4 +149,27 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	m.App.Session.Put(r.Context(), "reservation", reservation)
+
+	http.Redirect(w, r, "/reservation-summery", http.StatusSeeOther)
+
+}
+
+// ReservationSummery renders the ReservationSummery page
+func (m *Repository) ReservationSummery(w http.ResponseWriter, r *http.Request) {
+	resetvation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		log.Println("cannot get item from session")
+		m.App.Session.Put(r.Context(), "error", "Can't get reservation from session")
+		http.Redirect(w,r,"/",http.StatusTemporaryRedirect)
+		return
+	}
+
+	m.App.Session.Remove(r.Context(), "reservation")
+
+	data := make(map[string]interface{})
+	data["reservation"] = resetvation
+	render.RenderTemplate(w, r, "reservation-summery.page.gohtml", &models.TemplateData{
+		Data: data,
+	})
 }

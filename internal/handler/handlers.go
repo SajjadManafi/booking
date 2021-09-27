@@ -106,11 +106,11 @@ type jsonResponse struct {
 // AvailabilityJSON handles request for Availability and send JSON response
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	Resp := jsonResponse{
-		OK: true,
+		OK:      true,
 		Message: "Available",
 	}
 
-	out, err := json.MarshalIndent(Resp, "" , "     ")
+	out, err := json.MarshalIndent(Resp, "", "     ")
 	if err != nil {
 		log.Println(err)
 	}
@@ -127,15 +127,15 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	}
 	reservation := models.Reservation{
 		FirstName: r.Form.Get("first_name"),
-		LastName: r.Form.Get("last_name"),
-		Phone: r.Form.Get("phone_number"),
-		Email: r.Form.Get("email"),
+		LastName:  r.Form.Get("last_name"),
+		Phone:     r.Form.Get("phone_number"),
+		Email:     r.Form.Get("email"),
 	}
 
 	form := forms.New(r.PostForm)
 	//form.Has("first_name" ,r)
 
-	form.Required("first_name" , "last_name", "email")
+	form.Required("first_name", "last_name", "email")
 	form.MinLength("first_name", 3, r)
 	form.IsEmail("email")
 	if !form.Valid() {

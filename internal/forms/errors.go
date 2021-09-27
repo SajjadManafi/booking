@@ -3,8 +3,8 @@ package forms
 type errors map[string][]string
 
 // Add adds an error message for given form field
-func (e errors) Add(field, message string){
-	e[field] = append(e[field] , message)
+func (e errors) Add(field, message string) {
+	e[field] = append(e[field], message)
 }
 
 // Get return the first message

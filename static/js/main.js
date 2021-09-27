@@ -112,11 +112,9 @@ function Prompt() {
             focusConfirm: false,
             showCancelButton:true,
             willOpen: () => {
-                const elem = document.getElementById("reservation-date-modal");
-                const rp = new DateRangePicker(elem, {
-                    format: 'yyyy-mm-dd',
-                    showOnFocus: true
-                });
+                if (c.willOpen !== undefined){
+                    c.willOpen();
+                }
             },
             preConfirm: () => {
                 return [
@@ -125,8 +123,9 @@ function Prompt() {
                 ]
             },
             didOpen: () => {
-                document.getElementById('start').removeAttribute('disabled')
-                document.getElementById('end').removeAttribute('disabled')
+                if (c.didOpen !== undefined){
+                    c.didOpen();
+                }
             }
         })
 

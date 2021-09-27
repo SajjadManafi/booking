@@ -4,7 +4,9 @@ import (
 	"booking/pkg/config"
 	"booking/pkg/models"
 	"booking/pkg/render"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -81,9 +83,31 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{})
 }
 
-// PostAvailability renders the Availability page
+// PostAvailability handles request for Availability
 func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	start := r.Form.Get("start-date")
 	end := r.Form.Get("end-date")
-	w.Write([]byte(fmt.Sprintf("Start date is %s & end date is %s", start , end)))
+	w.Write([]byte(fmt.Sprintf("Start date is %s & end date is %s", start, end)))
+}
+
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+// AvailabilityJSON handles request for Availability and send JSON response
+func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	Resp := jsonResponse{
+		OK: true,
+		Message: "Available",
+	}
+
+	out, err := json.MarshalIndent(Resp, "" , "     ")
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println(string(out))
+	w.Header().Set("Content-Type", "Application/json")
+	w.Write(out)
 }

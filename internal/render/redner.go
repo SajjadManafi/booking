@@ -4,10 +4,10 @@ import (
 	"booking/internal/config"
 	"booking/internal/models"
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/justinas/nosurf"
 	"html/template"
-	"log"
 	"net/http"
 	"path/filepath"
 )
@@ -32,7 +32,7 @@ func AddDefaultData(dt *models.TemplateData, r *http.Request) *models.TemplateDa
 	return dt
 }
 
-func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, dt *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, dt *models.TemplateData) error {
 	var tc map[string]*template.Template
 	if app.UseCache {
 		// get the template cache from app config
@@ -43,7 +43,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, dt *mod
 
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal("Could not get template from app config!")
+		return errors.New("cant get template from cache")
 	}
 
 	dt = AddDefaultData(dt, r)
@@ -55,7 +55,10 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, dt *mod
 	_, err := buf.WriteTo(w)
 	if err != nil {
 		fmt.Println("Error writing template to browser", err)
+		return err
 	}
+
+	return nil
 
 }
 

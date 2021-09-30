@@ -2,6 +2,7 @@ package main
 
 import (
 	"booking/internal/config"
+	"booking/internal/driver"
 	"booking/internal/handler"
 	"booking/internal/helpers"
 	"booking/internal/models"
@@ -23,11 +24,13 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 
 func main() {
-	err := run()
+	db, err := run()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer db.SQL.Close()
 
 	fmt.Println("Starting App on Port ", Port)
 	//_ = http.ListenAndServe(Port, nil)
@@ -43,7 +46,7 @@ func main() {
 	}
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// what am I going to put in the session
 	gob.Register(models.Reservation{})
 
@@ -63,16 +66,27 @@ func run() error {
 
 	app.Session = session
 
+	// connect to database
+	log.Println("connecting to database...")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=booking password=test123")
+	if err != nil {
+		log.Fatal("Cannot connect to database! Dying...")
+	}
+	log.Println("Connected to database!")
+
+	defer db.SQL.Close()
+
+
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("cannot create template cache")
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tc
 	app.UseCache = false
 
-	repo := handler.NewRepo(&app)
+	repo := handler.NewRepo(&app, db)
 	handler.NewHandler(repo)
 	render.NewTemplates(&app)
 
@@ -81,5 +95,5 @@ func run() error {
 	//http.HandleFunc("/", handler.Repo.Home)
 	//http.HandleFunc("/About", handler.Repo.About)
 
-	return nil
+	return db, nil
 }

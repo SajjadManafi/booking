@@ -1,7 +1,7 @@
 {{template "base" .}}
 {{define "css"}}
     <style>
-        .datepicker{
+        .datepicker {
             z-index: 10000;
         }
     </style>
@@ -60,29 +60,34 @@
                     const elem = document.getElementById("reservation-date-modal");
                     const rp = new DateRangePicker(elem, {
                         format: 'yyyy-mm-dd',
-                        showOnFocus: true
+                        showOnFocus: true,
+                        minDate: new Date(),
                     });
                 },
                 didOpen: () => {
                     document.getElementById('start').removeAttribute('disabled')
                     document.getElementById('end').removeAttribute('disabled')
                 },
-                callback: function (result){
+                callback: function (result) {
                     console.log("called");
 
                     let form = document.getElementById("check-availability-form");
                     let formDate = new FormData(form);
-                    formDate.append("csrf_token", "{{.CSRFToken}}")
+                    formDate.append("csrf_token", "{{.CSRFToken}}");
+                    formDate.append("room_id", "1");
 
                     fetch("/search-availability-json", {
                         method: "post",
                         body: formDate,
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        console.log(data.ok)
-                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.ok) {
+                                console.log("room is available")
+                            } else {
+                                console.log("room is not available!")
+                            }
+                        })
                 }
             });
 

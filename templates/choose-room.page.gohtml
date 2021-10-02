@@ -1,0 +1,17 @@
+{{template "base" .}}
+
+{{define "content"}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Choose a Room!</h1>
+
+                {{$rooms := index .Data "rooms"}}
+
+                {{range $rooms}}
+                    {{.RoomName}}<br>
+                {{end}}
+            </div>
+        </div>
+    </div>
+{{end}}

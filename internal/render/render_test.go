@@ -35,19 +35,19 @@ func TestRenderTemplate(t *testing.T) {
 		t.Error(err)
 	}
 	var ww myWriter
-	err = RenderTemplate(&ww, r, "home.page.gohtml", &models.TemplateData{})
+	err = Template(&ww, r, "home.page.gohtml", &models.TemplateData{})
 	if err != nil {
 		t.Error("Error writing template to browser")
 	}
 
-	err = RenderTemplate(&ww, r, "None-Exit.page.gohtml", &models.TemplateData{})
+	err = Template(&ww, r, "None-Exit.page.gohtml", &models.TemplateData{})
 	if err == nil {
 		t.Error("Rendered Template that not exist")
 	}
 }
 
 func TestNewTemplates(t *testing.T) {
-	NewTemplates(app)
+	NewRenderer(app)
 }
 
 func TestCreateTemplateCache(t *testing.T) {

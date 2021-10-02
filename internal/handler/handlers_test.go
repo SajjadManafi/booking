@@ -3,9 +3,11 @@ package handler
 import (
 	"booking/internal/models"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -73,7 +75,7 @@ func TestRepository_Reservation(t *testing.T) {
 		},
 	}
 
-	req, _ := http.NewRequest("GET", "make-reservation", nil)
+	req, _ := http.NewRequest("GET", "/make-reservation", nil)
 	ctx := getCtx(req)
 	req = req.WithContext(ctx)
 
@@ -88,7 +90,7 @@ func TestRepository_Reservation(t *testing.T) {
 	}
 
 	// test case where reservation is not in session (rest everything)
-	req, _ = http.NewRequest("GET", "make-reservation", nil)
+	req, _ = http.NewRequest("GET", "/make-reservation", nil)
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 	rr = httptest.NewRecorder()
@@ -100,12 +102,55 @@ func TestRepository_Reservation(t *testing.T) {
 	}
 
 	// test with none-exist room
-	req, _ = http.NewRequest("GET", "make-reservation", nil)
+	req, _ = http.NewRequest("GET", "/make-reservation", nil)
 	ctx = getCtx(req)
 	req = req.WithContext(ctx)
 	rr = httptest.NewRecorder()
 	reservation.RoomID = 100
 	session.Put(ctx, "reservation", reservation)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Reservation Handler returned wrong code: got %d, want %d", rr.Code, http.StatusTemporaryRedirect)
+	}
+}
+
+func TestRepository_PostReservation(t *testing.T) {
+	reqBody := "start_date=2050-01-01"
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "end_date=2050-01-02")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "first_name=John")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "last_name=P")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "email=m@m.c")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "phone=4353")
+	reqBody = fmt.Sprintf("%s&%s", reqBody, "room_id=1")
+
+	req, _ := http.NewRequest("POST", "/make-reservation", strings.NewReader(reqBody))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+	rr := httptest.NewRecorder()
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	handler := http.HandlerFunc(Repo.PostReservation)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Reservation Handler returned wrong code: got %d, want %d", rr.Code, http.StatusTemporaryRedirect)
+	}
+
+	// test for missing post body
+
+	req, _ = http.NewRequest("POST", "/make-reservation", nil)
+	ctx = getCtx(req)
+	req = req.WithContext(ctx)
+	rr = httptest.NewRecorder()
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	handler = http.HandlerFunc(Repo.PostReservation)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("Reservation Handler returned wrong code for missing post body: got %d, want %d", rr.Code, http.StatusTemporaryRedirect)
+	}
 }
 
 func getCtx(req *http.Request) context.Context {
@@ -115,3 +160,5 @@ func getCtx(req *http.Request) context.Context {
 	}
 	return ctx
 }
+
+//TODO: complete this tests. 14.4

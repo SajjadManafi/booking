@@ -179,11 +179,11 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	available, _ := m.DB.SearchAvailabilityByRoomID(startDate, endDate, roomID)
 
 	Resp := jsonResponse{
-		OK:      available,
-		Message: "",
+		OK:        available,
+		Message:   "",
 		StartDate: sd,
-		EndDate: ed,
-		RoomID: strconv.Itoa(roomID),
+		EndDate:   ed,
+		RoomID:    strconv.Itoa(roomID),
 	}
 
 	out, err := json.MarshalIndent(Resp, "", "     ")
@@ -260,7 +260,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 // ReservationSummery renders the ReservationSummery page
 func (m *Repository) ReservationSummery(w http.ResponseWriter, r *http.Request) {
-	resetvation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
+	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
 		m.App.Session.Put(r.Context(), "error", "Can't get reservation from session")
 		m.App.ErrorLog.Println("Can't get reservation from session")
@@ -270,10 +270,10 @@ func (m *Repository) ReservationSummery(w http.ResponseWriter, r *http.Request) 
 
 	m.App.Session.Remove(r.Context(), "reservation")
 	data := make(map[string]interface{})
-	data["reservation"] = resetvation
+	data["reservation"] = reservation
 
-	sd := resetvation.StartDate.Format("2006-01-02")
-	ed := resetvation.EndDate.Format("2006-01-02")
+	sd := reservation.StartDate.Format("2006-01-02")
+	ed := reservation.EndDate.Format("2006-01-02")
 
 	stringMap := make(map[string]string)
 	stringMap["start_date"] = sd
@@ -309,7 +309,7 @@ func (m *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 	RoomID, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	sd := r.URL.Query().Get("s")
-	ed  := r.URL.Query().Get("e")
+	ed := r.URL.Query().Get("e")
 
 	layout := "2006-01-02"
 
@@ -329,7 +329,6 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 	res.Room.RoomName = room.RoomName
 
 	m.App.Session.Put(r.Context(), "reservation", res)
-
 
 	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 

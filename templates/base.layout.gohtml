@@ -87,21 +87,21 @@
     <script src="https://unpkg.com/notie"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/static/js/main.js"></script>
+    <script>
+        {{with .Error}}
+        notieAlert("{{.}}" , "error")
+        {{end}}
 
+        {{with .Flash}}
+        notieAlert("{{.}}" , "success")
+        {{end}}
+
+        {{with .Warning}}
+        notieAlert("{{.}}" , "warning")
+        {{end}}
+    </script>
     {{block "js" .}}
-        <script>
-            {{with .Error}}
-                notieAlert("{{.}}" , "error")
-            {{end}}
 
-            {{with .Flash}}
-            notieAlert("{{.}}" , "success")
-            {{end}}
-
-            {{with .Warning}}
-            notieAlert("{{.}}" , "warning")
-            {{end}}
-        </script>
     {{end}}
     </body>
 

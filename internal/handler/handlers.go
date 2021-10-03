@@ -10,6 +10,7 @@ import (
 	"booking/internal/repository"
 	"booking/internal/repository/dbrepo"
 	"encoding/json"
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
@@ -264,6 +265,21 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
+
+	// send notification - first to guest
+	htmlMsg := fmt.Sprintf(`
+		<strong>Reservation Confirmation</strong><br>
+		Dear %s: <br>
+		This is confirm your reservation from %s to %s.` ,
+		reservation.FirstName, reservation.StartDate.Format("2006-01-02"),reservation.EndDate.Format("2006-01-02"))
+	msg := models.MailData{
+		To:      reservation.Email,
+		From:    "me@here.com",
+		Subject: "Reservation Confirmation",
+		Content: htmlMsg,
+	}
+
+	m.App.MailChan <- msg
 
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 

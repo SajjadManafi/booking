@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -270,13 +271,13 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	htmlMsg := fmt.Sprintf(`
 		<strong>Reservation Confirmation</strong><br>
 		Dear %s: <br>
-		This is confirm your reservation from %s to %s.` ,
-		reservation.FirstName, reservation.StartDate.Format("2006-01-02"),reservation.EndDate.Format("2006-01-02"))
+		This is confirm your reservation from %s to %s.`,
+		reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
 	msg := models.MailData{
-		To:      reservation.Email,
-		From:    "me@here.com",
-		Subject: "Reservation Confirmation",
-		Content: htmlMsg,
+		To:       reservation.Email,
+		From:     "me@here.com",
+		Subject:  "Reservation Confirmation",
+		Content:  htmlMsg,
 		Template: "basic.html",
 	}
 
@@ -285,8 +286,8 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	// send notification to property owner
 	htmlMsg = fmt.Sprintf(`
 		<strong>Reservation Notification</strong><br>
-		a reservation has been made for %s from %s to %s.` ,
-		reservation.FirstName, reservation.StartDate.Format("2006-01-02"),reservation.EndDate.Format("2006-01-02"))
+		a reservation has been made for %s from %s to %s.`,
+		reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
 	msg = models.MailData{
 		To:      "me@here.com",
 		From:    "me@here.com",
@@ -382,5 +383,37 @@ func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "login.page.gohtml", &models.TemplateData{
 		Form: forms.New(nil),
 	})
+}
+
+// PostShowLogin handle logging in user
+func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
+	_ = m.App.Session.RenewToken(r.Context())
+
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+	}
+
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	form := forms.New(r.PostForm)
+	form.Required("email", "password")
+
+	if !form.Valid() {
+		// TODO: take user back to page
+	}
+
+	id, _, err := m.DB.Authenticate(email, password)
+	if err != nil {
+		log.Println(err)
+		m.App.Session.Put(r.Context(), "error", "Invalid login credential")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "user_id", id)
+	m.App.Session.Put(r.Context(), "flash", "Logged in successfully")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }

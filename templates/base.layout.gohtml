@@ -57,7 +57,11 @@
                     <a class="nav-link" href="/contact">Cantact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/user/login" tabindex="-1" aria-disabled="true">Login</a>
+                    {{if eq .IsAuthenticated 1}}
+                        <a class="nav-link" href="/user/logout" tabindex="-1" aria-disabled="true">Logout</a>
+                    {{else}}
+                        <a class="nav-link" href="/user/login" tabindex="-1" aria-disabled="true">Login</a>
+                    {{end}}
                 </li>
             </ul>
         </div>
@@ -92,15 +96,15 @@
     <script src="/static/js/main.js"></script>
     <script>
         {{with .Error}}
-        notieAlert("{{.}}" , "error")
+        notieAlert("{{.}}", "error")
         {{end}}
 
         {{with .Flash}}
-        notieAlert("{{.}}" , "success")
+        notieAlert("{{.}}", "success")
         {{end}}
 
         {{with .Warning}}
-        notieAlert("{{.}}" , "warning")
+        notieAlert("{{.}}", "warning")
         {{end}}
     </script>
     {{block "js" .}}

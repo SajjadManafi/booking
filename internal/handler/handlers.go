@@ -379,6 +379,7 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// ShowLogin shows the login screen
 func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "login.page.gohtml", &models.TemplateData{
 		Form: forms.New(nil),
@@ -430,14 +431,28 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
+// AdminDashboard shows the Admin Dashboard
 func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request)  {
 	render.Template(w, r, "admin-dashboard.page.gohtml", &models.TemplateData{})
 }
 
+// AdminNewReservation shows all new reservations in admin dashboard
 func (m *Repository) AdminNewReservation(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "admin-new-reservations.page.gohtml", &models.TemplateData{})
+	reservations, err := m.DB.AllNewReservation()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	data := make(map[string]interface{})
+
+	data["reservations"] = reservations
+	render.Template(w, r, "admin-new-reservations.page.gohtml", &models.TemplateData{
+		Data: data,
+	})
 }
 
+// AdminAllReservation shows all reservations in admin dashboard
 func (m *Repository) AdminAllReservation(w http.ResponseWriter, r *http.Request) {
 	reservations, err := m.DB.AllReservation()
 	if err != nil {

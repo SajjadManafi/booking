@@ -56,12 +56,33 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/contact">Cantact</a>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Rooms
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/generals-quarters">General's Quartes</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/majors-suite">Major's Suite</a>
+                    </div>
+                </li>
                 <li class="nav-item">
                     {{if eq .IsAuthenticated 1}}
-                        <a class="nav-link" href="/user/logout" tabindex="-1" aria-disabled="true">Logout</a>
-                    {{else}}
-                        <a class="nav-link" href="/user/login" tabindex="-1" aria-disabled="true">Login</a>
-                    {{end}}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Admin
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/admin/dashboard">Dashboard</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/user/logout">Logout</a>
+                    </div>
+                </li>
+                {{else}}
+                    <a class="nav-link" href="/user/login" tabindex="-1" aria-disabled="true">Login</a>
+                {{end}}
                 </li>
             </ul>
         </div>

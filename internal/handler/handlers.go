@@ -501,6 +501,49 @@ func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request
 	})
 }
 
+func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Request)  {
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	exploded := strings.Split(r.RequestURI, "/")
+
+	id, err := strconv.Atoi(exploded[4])
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	src := exploded[3]
+
+	stringMap := make(map[string]string)
+	stringMap["src"] = src
+
+	res, err := m.DB.GetReservationByID(id)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	res.FirstName = r.Form.Get("first_name")
+	res.LastName = r.Form.Get("last_name")
+	res.Email = r.Form.Get("email")
+	res.Phone = r.Form.Get("phone_number")
+
+	err = m.DB.UpdateReservation(res)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "flash", "Changes Saved")
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-%s", src), http.StatusSeeOther)
+
+
+}
+
 // AdminReservationCalendar displays the reservation calendar
 func (m *Repository) AdminReservationCalendar(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "admin-reservations-calendar.page.gohtml", &models.TemplateData{})
